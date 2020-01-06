@@ -1,0 +1,8 @@
+[azure]
+user = "blukasik"
+pass = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+organization = "xxxxxxxxxx"
+
+[report]
+full_name = "Bartek Łukasik"
+date_from = "2020-01-01"
