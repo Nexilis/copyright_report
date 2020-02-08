@@ -3,21 +3,21 @@ use std::fs;
 
 #[derive(Deserialize, Debug)]
 pub struct Settings {
-    azure: Option<AzureSettings>,
-    report: Option<ReportSettings>,
+    pub azure: Option<AzureSettings>,
+    pub report: Option<ReportSettings>,
 }
 
 #[derive(Deserialize, Debug)]
-struct AzureSettings {
-    user: Option<String>,
-    pass: Option<String>,
-    organization: Option<String>,
+pub struct AzureSettings {
+    pub user: Option<String>,
+    pub pass: Option<String>,
+    pub organization: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
-struct ReportSettings {
-    full_name: Option<String>,
-    date_from: Option<String>,
+pub struct ReportSettings {
+    pub full_name: Option<String>,
+    pub date_from: Option<String>,
 }
 
 pub fn read_from_file() -> Settings {
