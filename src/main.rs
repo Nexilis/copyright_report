@@ -3,6 +3,7 @@ use std::error::Error;
 use hyper::body;
 use hyper::{Client, Request, Method, Body};
 use hyper_tls::HttpsConnector;
+use serde_json::{Value};
 use tokio;
 
 type Result<T> = std::result::Result<T, Box<dyn Error + Send + Sync>>;
@@ -20,7 +21,7 @@ async fn main() -> Result<()> {
 
     let connection_data_uri = format!("{}/_apis/connectionData", &url_with_org);
     let _repositories_uri = format!("{}/_apis/git/repositories", &url_with_org);
-    let _pull_requests_uri = format!("{}/_apis/git/pullrequests", &url_with_org);
+    let _pull_requests_uri = format!("{}/_apis/git/pullRequests", &url_with_org);
     let _commits_uri = format!("{}/_apis/git/repositories/repo-id/commits", &url_with_org);
 
     let https = HttpsConnector::new();
@@ -41,7 +42,9 @@ async fn main() -> Result<()> {
 
     let body_bytes = body::to_bytes(res.into_body()).await?;
     let body = String::from_utf8(body_bytes.to_vec()).expect("response was not valid utf-8");
-    println!("Body: {}", body);
+    let body_deserialized: Value = serde_json::from_str(&body)?;
+
+    println!("{:#?}", body_deserialized);
 
     Ok(())
     //https://docs.google.com/presentation/d/1QmWRwnKzclTZFn2h6tlMyjPaQVUCR9haoJd7NiIeONA/edit#slide=id.p
