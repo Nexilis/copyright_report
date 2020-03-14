@@ -1,4 +1,5 @@
 mod settings;
+
 use hyper::body;
 use hyper::{Body, Client, Method, Request};
 use hyper_tls::HttpsConnector;
@@ -24,13 +25,26 @@ async fn main() -> Result<()> {
     let _pull_requests_uri = format!("{}/_apis/git/pullRequests", &url_with_org);
     let _commits_uri = format!("{}/_apis/git/repositories/repo-id/commits", &url_with_org);
 
-    let https = HttpsConnector::new();
-    let client = Client::builder().build::<_, hyper::Body>(https);
+    let pass: String = azure_settings.pass.unwrap();
+    let auth_header: String = create_auth_header(&pass);
 
-    let pass = azure_settings.pass.unwrap();
+    let authenticated_user_id = get_authenticated_user_id(&connection_data_uri, &auth_header).await?;
+
+    println!("{:#?}", authenticated_user_id);
+
+    Ok(())
+    //https://docs.google.com/presentation/d/1QmWRwnKzclTZFn2h6tlMyjPaQVUCR9haoJd7NiIeONA/edit#slide=id.p
+}
+
+fn create_auth_header(pass: &str) -> String {
     let secret = format!(":{}", pass);
     let secret_encoded = base64::encode(&secret);
-    let auth_header = format!("Basic {}", secret_encoded);
+    format!("Basic {}", secret_encoded)
+}
+
+async fn get_authenticated_user_id(connection_data_uri: &str, auth_header: &str) -> Result<String> {
+    let https = HttpsConnector::new();
+    let client = Client::builder().build::<_, hyper::Body>(https);
 
     let req = Request::builder()
         .method(Method::GET)
@@ -53,8 +67,5 @@ async fn main() -> Result<()> {
         .as_str()
         .unwrap();
 
-    println!("{:#?}", authenticated_user_id);
-
-    Ok(())
-    //https://docs.google.com/presentation/d/1QmWRwnKzclTZFn2h6tlMyjPaQVUCR9haoJd7NiIeONA/edit#slide=id.p
+    Ok(authenticated_user_id.to_string())
 }
