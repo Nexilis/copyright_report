@@ -1,5 +1,6 @@
 mod settings;
 
+use chrono::prelude::*;
 use hyper::body;
 use hyper::{Body, Client, Method, Request};
 use hyper_tls::HttpsConnector;
@@ -25,10 +26,13 @@ async fn main() -> Result<()> {
     let _pull_requests_uri = format!("{}/_apis/git/pullRequests", &url_with_org);
     let _commits_uri = format!("{}/_apis/git/repositories/repo-id/commits", &url_with_org);
 
+    let (_date_from, _date_to) = calculate_dates();
+
     let pass: String = azure_settings.pass.unwrap();
     let auth_header: String = create_auth_header(&pass);
 
-    let authenticated_user_id = get_authenticated_user_id(&connection_data_uri, &auth_header).await?;
+    let authenticated_user_id =
+        get_authenticated_user_id(&connection_data_uri, &auth_header).await?;
 
     println!("{:#?}", authenticated_user_id);
 
@@ -68,4 +72,13 @@ async fn get_authenticated_user_id(connection_data_uri: &str, auth_header: &str)
         .unwrap();
 
     Ok(authenticated_user_id.to_string())
+}
+
+fn calculate_dates() -> (String, String) {
+    let date_to = Local::now();
+    let date_from = date_to - chrono::Duration::days(30);
+    (
+        date_to.format("%Y-%m-%d").to_string(),
+        date_from.format("%Y-%m-%d").to_string(),
+    )
 }
