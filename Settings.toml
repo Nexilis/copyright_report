@@ -5,4 +5,4 @@ organization = "xxxxxxxxxx"
 
 [report]
 full_name = "Bartek Łukasik"
-date_from = "2020-01-01"
+date_from = "2020-02-01T00:00:00+02:00" # rfc3339
