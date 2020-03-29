@@ -21,7 +21,7 @@ async fn main() -> Result<()> {
     let pass: String = azure_settings.pass.unwrap();
     let auth_header: String = create_auth_header(&pass);
 
-    pull_requests::load_pull_requests(&azure_api_config.uris.connection_data, &auth_header).await;
+    let _ = pull_requests::load_pull_requests(&azure_api_config, &auth_header).await?;
 
     Ok(())
     //https://docs.google.com/presentation/d/1QmWRwnKzclTZFn2h6tlMyjPaQVUCR9haoJd7NiIeONA/edit#slide=id.p

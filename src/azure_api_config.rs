@@ -18,7 +18,7 @@ pub struct Uris {
 impl AzureApiConfig {
     #[inline(always)]
     pub fn new(organization: &str, date_from_str: &str) -> AzureApiConfig {
-        let base_url = "https://dev.azure.com/";
+        let base_url = "https://dev.azure.com";
         let url_with_org = format!("{}/{}", base_url, organization);
         let (date_from, date_to) = calculate_dates(&date_from_str);
         println!("Dates: {} - {}", date_from, date_to);
