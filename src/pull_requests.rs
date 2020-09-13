@@ -2,14 +2,24 @@ use crate::azure_api_config::*;
 use hyper::body;
 use hyper::{Body, Client, Method, Request};
 use hyper_tls::HttpsConnector;
+use serde::{Serialize, Deserialize};
 use serde_json::Value;
 use std::error::Error;
 
 type Result<T> = std::result::Result<T, Box<dyn Error + Send + Sync>>;
 
-#[derive(Debug, Clone, Hash, PartialEq, Eq)]
-pub struct PullRequest {
-    pub name: String,
+#[derive(Serialize, Deserialize, Debug)]
+struct PullRequest {
+    // TODO: create remaining fields (use code in line 57-61 to see the response)
+    closedDate: String,
+    codeReviewId: u32,
+    creationDate: String
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct PullRequestsResponse {
+    count: u32,
+    value: Vec<PullRequest>
 }
 
 pub async fn load_pull_requests(cfg: &AzureApiConfig, auth_header: &str) -> Result<String> {
@@ -39,12 +49,15 @@ pub async fn load_pull_requests(cfg: &AzureApiConfig, auth_header: &str) -> Resu
     // TODO: extract body deserialization
     let body_bytes = body::to_bytes(res.into_body()).await?;
     let body = String::from_utf8(body_bytes.to_vec()).expect("response was not valid utf-8");
-    let body_deserialized: Value = serde_json::from_str(&body)?;
-    let res_body = body_deserialized.as_object().unwrap();
 
+    let pull_requests: PullRequestsResponse = serde_json::from_str(&body)?;
+    println!("{:#?}", pull_requests);
     // TODO: filter PRs following: if status == "completed"  closedDate in range date_from date_to else creationDate in rage date_from date_to
 
-    println!("{:#?}", res_body);
+    // let body_deserialized: Value = serde_json::from_str(&body)?;
+    // let res_body = body_deserialized.as_object().unwrap();
+    // let response_arr = res_body.get("value").unwrap();
+    // println!("{:#?}", response_arr);
 
     Ok(user_id.to_string())
 }
