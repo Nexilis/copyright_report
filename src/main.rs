@@ -20,12 +20,12 @@ async fn main() -> Result<()> {
     let backend = TermionBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
     terminal.clear().err();
-    terminal.draw(|mut f| {
+    terminal.draw(|f| {
         let size = f.size();
-        let mut block = Block::default()
+        let block = Block::default()
             .title("Block")
             .borders(Borders::ALL);
-        f.render(&mut block, size);
+        f.render_widget(block, size);
     }).err();
 
     let set = settings::read_from_file();
