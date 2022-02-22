@@ -3,30 +3,25 @@ mod pull_requests;
 mod settings;
 
 use std::error::Error;
-use tokio;
-
 use std::io;
-use termion::raw::IntoRawMode;
-use tui::Terminal;
-use tui::backend::TermionBackend;
-use tui::widgets::{Widget, Block, Borders};
-use tui::layout::{Layout, Constraint, Direction};
+use tokio;
+use tui::{backend::CrosstermBackend, Terminal};
 
 type Result<T> = std::result::Result<T, Box<dyn Error + Send + Sync>>;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let stdout = io::stdout().into_raw_mode()?;
-    let backend = TermionBackend::new(stdout);
+    let stdout = io::stdout();
+    let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
-    terminal.clear().err();
-    terminal.draw(|f| {
-        let size = f.size();
-        let block = Block::default()
-            .title("Block")
-            .borders(Borders::ALL);
-        f.render_widget(block, size);
-    }).err();
+    // terminal.clear().err();
+    // terminal.draw(|f| {
+    //     let size = f.size();
+    //     let block = Block::default()
+    //         .title("Block")
+    //         .borders(Borders::ALL);
+    //     f.render_widget(block, size);
+    // }).err();
 
     let set = settings::read_from_file();
     println!("{:#?}", set);
@@ -43,7 +38,6 @@ async fn main() -> Result<()> {
     let _ = pull_requests::load_pull_requests(&azure_api_config, &auth_header).await?;
 
     Ok(())
-    //https://docs.google.com/presentation/d/1QmWRwnKzclTZFn2h6tlMyjPaQVUCR9haoJd7NiIeONA/edit#slide=id.p
 }
 
 fn create_auth_header(pass: &str) -> String {

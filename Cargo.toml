@@ -1,17 +1,18 @@
 [package]
+authors = ["barteklu"]
+edition = "2021"
 name = "copyright_report"
 version = "0.1.0"
-authors = ["barteklu"]
-edition = "2018"
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
+hyper = {version = "0.14", features = ["full"]}
+reqwest = {version = "0.11", features = ["json"]}
+serde = {version = "1.0", features = ["derive"]}
 serde_json = "1.0"
-tokio = { version = "0.2", features = ["macros", "rt-core"] }
-toml = "0.5"
-hyper = "0.13"
-hyper-tls = "0.4"
-base64 = "0.12"
+tokio = {version = "1", features = ["full"]}
+
+base64 = "0.13.0"
 chrono = "0.4"
-tui = "0.10.0"
-termion = "1.5"
+crossterm = "0.23.0"
+toml = "0.5"
+tui = "0.17.0"

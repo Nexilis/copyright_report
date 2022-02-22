@@ -1,7 +1,6 @@
 use crate::azure_api_config::*;
 use hyper::body;
 use hyper::{Body, Client, Method, Request};
-use hyper_tls::HttpsConnector;
 use serde::{Serialize, Deserialize};
 use serde_json::Value;
 use std::error::Error;
@@ -28,8 +27,8 @@ pub async fn load_pull_requests(cfg: &AzureApiConfig, auth_header: &str) -> Resu
         .unwrap();
     println!("Authenticated User Id: {:#?}", user_id);
 
-    // TODO: one https is probably enough
-    let client = Client::builder().build::<_, hyper::Body>(HttpsConnector::new());
+    // TODO: one client is probably enough
+    let client = Client::new();
 
     let creator_uri = format!(
         "{}?status=All&creatorId={}&$top=1",
@@ -63,7 +62,7 @@ pub async fn load_pull_requests(cfg: &AzureApiConfig, auth_header: &str) -> Resu
 }
 
 async fn get_authenticated_user_id(connection_data_uri: &str, auth_header: &str) -> Result<String> {
-    let client = Client::builder().build::<_, hyper::Body>(HttpsConnector::new());
+    let client = Client::new();
 
     let req = Request::builder()
         .method(Method::GET)
